@@ -9,23 +9,16 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Entity
 public class Task implements SuperEntity{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    @Column(nullable = false)
     private String content;
-    @Enumerated(value = EnumType.STRING)
     private Status status;
-    @ManyToOne
-    @JoinColumn(name = "project_id",referencedColumnName = "id",nullable = false)
-    private Project project;
+   private int projectId;
 
-    public Task(String content, Status status, Project project) {
+    public Task(String content, Status status,int projectId) {
         this.content = content;
         this.status = status;
-        this.project = project;
+        this.projectId = projectId;
     }
 
     public static enum Status{
