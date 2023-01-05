@@ -12,6 +12,6 @@ import java.util.Set;
 public class Project implements SuperEntity{
     private int id;
     private String name;
-    private User user;
+    private String username;
 
 }
