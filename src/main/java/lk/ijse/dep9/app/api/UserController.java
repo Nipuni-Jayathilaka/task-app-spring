@@ -10,7 +10,9 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = "application/json")
-    public void createUserAccount(@RequestBody UserDTO userDTO){}
+    public void createUserAccount(@RequestBody UserDTO userDTO){
+        System.out.println("user");
+    }
 
     @PatchMapping("/me")
     public void updateUserAccountDetails(){}
