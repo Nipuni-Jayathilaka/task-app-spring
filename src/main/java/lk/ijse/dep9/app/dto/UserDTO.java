@@ -1,5 +1,6 @@
 package lk.ijse.dep9.app.dto;
 
+import lk.ijse.dep9.app.util.ValidationGroups;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,7 @@ public class UserDTO implements Serializable {
     @NotBlank(message = "full name cannot be empty")
     @Pattern(regexp = "^[A-Za-z ]+$", message = "invalid name")
     private String fullName;
-    @NotBlank(message = "username cannot be empty")
+    @NotBlank(message = "username cannot be empty",groups = ValidationGroups.Create.class)
     private String username;
     @NotEmpty(message = "password cannot be empty")
     @Length(min = 3, message = "Password should at least 3 characters")

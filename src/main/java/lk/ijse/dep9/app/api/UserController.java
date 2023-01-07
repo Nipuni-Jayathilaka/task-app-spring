@@ -1,13 +1,16 @@
 package lk.ijse.dep9.app.api;
 
 import lk.ijse.dep9.app.dto.UserDTO;
+import lk.ijse.dep9.app.util.ValidationGroups;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import javax.validation.Validation;
 import java.util.Optional;
 
 @RestController
@@ -16,7 +19,7 @@ import java.util.Optional;
 public class UserController {
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = "application/json")
-    public void createUserAccount(@Valid @RequestBody UserDTO userDTO /*,Errors errors*/){
+    public void createUserAccount(@Validated(ValidationGroups.Create.class) @RequestBody UserDTO userDTO /*,Errors errors*/){
         System.out.println("user");
 //        Optional<FieldError> fieldError = errors.getFieldErrors().stream().findFirst();
 //        if (fieldError.isPresent()){
@@ -30,9 +33,15 @@ public class UserController {
         System.out.println("update");
     }
 
-    @GetMapping("/me")
-    public void getUserAccountDetails(){}
+    @GetMapping(value = "/me",produces = "application/json")
+    public UserDTO getUserAccountDetails(){
+        System.out.println("getUserAccountDetails");
+        return new UserDTO();
+    }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/me")
-    public void deleteUserAccount(){}
+    public void deleteUserAccount(){
+        System.out.println("deleteUserAccount");
+    }
 }
