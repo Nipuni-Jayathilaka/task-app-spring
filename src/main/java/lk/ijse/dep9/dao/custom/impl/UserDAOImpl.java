@@ -1,7 +1,11 @@
 package lk.ijse.dep9.dao.custom.impl;
 
 import lk.ijse.dep9.dao.custom.UserDAO;
+import lk.ijse.dep9.dao.util.ConnectionUtil;
 import lk.ijse.dep9.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -10,14 +14,11 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
+@Component
 public class UserDAOImpl implements UserDAO {
 
-    private final Connection connection;
-
-    public UserDAOImpl(Connection connection) {
-        this.connection = connection;
-    }
+    @Autowired
+    private Connection connection;
 
     @Override
     public User save(User user) {

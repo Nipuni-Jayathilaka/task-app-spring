@@ -9,7 +9,7 @@ public class ConnectionUtil {
         threadLocal.set(connection);
     }
 
-    public static Connection getThreadLocal() {
+    public static Connection getConnection() {
         return threadLocal.get();
     }
 }

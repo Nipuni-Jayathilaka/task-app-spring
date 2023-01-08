@@ -1,8 +1,12 @@
 package lk.ijse.dep9.dao.custom.impl;
 
 import lk.ijse.dep9.dao.custom.ProjectDAO;
+import lk.ijse.dep9.dao.util.ConnectionUtil;
 import lk.ijse.dep9.entity.Project;
 import lk.ijse.dep9.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import javax.persistence.GeneratedValue;
 import java.sql.*;
@@ -10,14 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Component
 public class ProjectDAOImpl implements ProjectDAO {
-    private final Connection connection;
+    @Autowired
+    private Connection connection;
 
-    public ProjectDAOImpl(Connection connection) {
-        this.connection = connection;
-    }
-
-    @Override
+     @Override
     public Project save(Project project) {
         try {
             PreparedStatement stm = connection.prepareStatement("INSERT INTO Project (name, username) VALUES (?,?)", Statement.RETURN_GENERATED_KEYS);
