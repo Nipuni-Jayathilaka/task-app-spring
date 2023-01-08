@@ -1,6 +1,6 @@
-package lk.ijse.dep9.dao;
+package lk.ijse.dep9.app.dao;
 
-import lk.ijse.dep9.entity.SuperEntity;
+import lk.ijse.dep9.app.entity.SuperEntity;
 
 import java.io.Serializable;
 import java.util.List;

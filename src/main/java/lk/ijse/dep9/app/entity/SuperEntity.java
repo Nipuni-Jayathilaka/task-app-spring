@@ -1,4 +1,4 @@
-package lk.ijse.dep9.entity;
+package lk.ijse.dep9.app.entity;
 
 import java.io.Serializable;
 

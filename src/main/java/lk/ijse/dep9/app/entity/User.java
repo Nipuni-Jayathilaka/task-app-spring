@@ -1,4 +1,4 @@
-package lk.ijse.dep9.entity;
+package lk.ijse.dep9.app.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

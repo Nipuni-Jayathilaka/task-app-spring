@@ -1,10 +1,6 @@
-package lk.ijse.dep9.entity;
+package lk.ijse.dep9.app.entity;
 
 import lombok.*;
-
-import javax.persistence.*;
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor

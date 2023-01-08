@@ -1,4 +1,4 @@
-package lk.ijse.dep9.dao.util;
+package lk.ijse.dep9.app.dao.util;
 
 import java.sql.Connection;
 

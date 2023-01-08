@@ -1,11 +1,8 @@
-package lk.ijse.dep9.dao.custom.impl;
+package lk.ijse.dep9.app.dao.custom.impl;
 
-import lk.ijse.dep9.dao.custom.TaskDAO;
-import lk.ijse.dep9.dao.util.ConnectionUtil;
-import lk.ijse.dep9.entity.Project;
-import lk.ijse.dep9.entity.Task;
+import lk.ijse.dep9.app.dao.custom.TaskDAO;
+import lk.ijse.dep9.app.entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -14,8 +11,11 @@ import java.util.List;
 import java.util.Optional;
 @Component
 public class TaskDAOImpl implements TaskDAO {
-    @Autowired
-    private Connection connection;
+    private final Connection connection;
+
+    public TaskDAOImpl(Connection connection) {
+        this.connection = connection;
+    }
 
     @Override
     public Task save(Task task) {
