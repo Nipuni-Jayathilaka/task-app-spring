@@ -3,6 +3,7 @@ package lk.ijse.dep9.app.dao.custom.impl;
 import lk.ijse.dep9.app.dao.custom.ProjectDAO;
 import lk.ijse.dep9.app.entity.Project;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -12,11 +13,8 @@ import java.util.Optional;
 
 @Component
 public class ProjectDAOImpl implements ProjectDAO {
-    private final Connection connection;
-
-    public ProjectDAOImpl(Connection connection) {
-        this.connection = connection;
-    }
+    @Autowired
+    private Connection connection;
 
     @Override
     public Project save(Project project) {
