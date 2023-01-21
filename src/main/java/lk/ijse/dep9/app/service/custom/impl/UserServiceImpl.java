@@ -25,7 +25,6 @@ public class UserServiceImpl implements UserService {
     public void createNewUserAccount(UserDTO userDTO) {
         userDAO.save(transformer.toUser(userDTO));
 //        if (true) throw new RuntimeException();
-        userDAO.save(new User("testing","testing","testing"));
     }
 
 
