@@ -20,7 +20,6 @@ public class UserDAOImpl implements UserDAO {
     private final JdbcTemplate jdbc;
 
     public UserDAOImpl(JdbcTemplate jdbc) {
-
         this.jdbc = jdbc;
     }
 
@@ -44,10 +43,10 @@ public class UserDAOImpl implements UserDAO {
     }
     @Override
     public Optional<User> findById(String pk) {
-        return jdbc.query("SELECT full_name, username, password FROM User WHERE username=?",rs-> {
-            return Optional.of(new User(rs.getString("username"), rs.getString("full_name"), rs.getString("password")));
+        return Optional.ofNullable(jdbc.query("SELECT full_name, username, password FROM User WHERE username=?",rs-> {
+            return new User(rs.getString("username"), rs.getString("full_name"), rs.getString("password"));
 
-        }, pk);
+        }, pk));
 
     }
 

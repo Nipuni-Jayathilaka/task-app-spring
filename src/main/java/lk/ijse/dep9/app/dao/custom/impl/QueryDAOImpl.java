@@ -8,8 +8,8 @@ import org.springframework.stereotype.Component;
 import java.sql.Connection;
 @Component
 public class QueryDAOImpl implements QueryDAO {
-    @Autowired
-    private Connection connection;
-
-
+    private final Connection connection;
+    public QueryDAOImpl(Connection connection) {
+        this.connection = connection;
+    }
 }

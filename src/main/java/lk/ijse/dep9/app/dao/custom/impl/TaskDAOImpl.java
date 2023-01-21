@@ -4,6 +4,9 @@ import lk.ijse.dep9.app.dao.custom.TaskDAO;
 import lk.ijse.dep9.app.entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
 
 import java.sql.*;
@@ -12,97 +15,71 @@ import java.util.List;
 import java.util.Optional;
 @Component
 public class TaskDAOImpl implements TaskDAO {
-    @Autowired
-    private Connection connection;
+    private JdbcTemplate jdbc;
+
+    public TaskDAOImpl(JdbcTemplate jdbc) {
+        this.jdbc = jdbc;
+    }
 
     @Override
     public Task save(Task task) {
-        try {
-            PreparedStatement stm = connection.prepareStatement("INSERT INTO Task (content, project_id) VALUES (?,?)",Statement.RETURN_GENERATED_KEYS);
-            stm.setString(1, task.getContent());
-            stm.setInt(2, task.getProjectId());
-            stm.executeUpdate();
 
-            ResultSet generatedKeys = stm.getGeneratedKeys();
-            generatedKeys.next();
-            int ge = generatedKeys.getInt(1);
-            task.setId(ge);
-            return task;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        KeyHolder keyHolder=new GeneratedKeyHolder();
+        jdbc.update(con->{
+            PreparedStatement stm=con.prepareStatement("INSERT INTO Task (content,status, project_id) VALUES (?,?,?)",Statement.RETURN_GENERATED_KEYS);
+            stm.setString(1, task.getContent());
+            stm.setString(2, task.getStatus().toString());
+            stm.setInt(3,task.getProjectId());
+            return stm;
+        },keyHolder);
+        task.setId(keyHolder.getKey().intValue());
+        return task;
     }
 
     @Override
     public void update(Task task) {
-        try {
-            PreparedStatement stm = connection.prepareStatement("UPDATE Task SET content=?, status=? WHERE id=?");
-            stm.setString(1,task.getContent());
-            stm.setInt(2, task.getProjectId());
-            stm.setInt(3, task.getId());
-            stm.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        jdbc.update("UPDATE Task SET content=?, status=? WHERE id=?",
+                task.getContent(),task.getStatus(),task.getProjectId());
+
     }
 
     @Override
     public void deleteById(Integer pk) {
-        try {
-            PreparedStatement stm = connection.prepareStatement("DELETE FROM Task WHERE id=?");
-            stm.setInt(1, pk);
-            stm.executeUpdate();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        jdbc.update("DELETE FROM Task WHERE id=?",pk);
+
     }
 
     @Override
     public Optional<Task> findById(Integer pk) {
-        try {
-            PreparedStatement stm = connection.prepareStatement("SELECT * FROM Task WHERE id=?");
-            stm.setInt(1,pk);
-            ResultSet rst = stm.executeQuery();
-            if (rst.next()){
-                return Optional.of(new Task(pk,rst.getString("content"), Task.Status.valueOf(rst.getString("status")), rst.getInt("project_id")));
-            }
-            return Optional.empty();
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return Optional.ofNullable(jdbc.query("SELECT * FROM Task WHERE id=?",rst->{
+            return new Task(pk,rst.getString("content"), Task.Status.valueOf(rst.getString("status")), rst.getInt("project_id"));
+        },pk));
+
     }
 
     @Override
     public List<Task> findAll() {
-        try {
-            PreparedStatement stm = connection.prepareStatement("SELECT * FROM Task ");
-            ResultSet rst = stm.executeQuery();
-            List<Task> taskList = new ArrayList<>();
-            while (rst.next()){
-                Task task = new Task(rst.getInt("id"),rst.getString("content"), Task.Status.valueOf(rst.getString("status")),rst.getInt("project_id"));
-                taskList.add(task);
-            }
-            return taskList;
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        return jdbc.query("SELECT * FROM Task",(rst,rowIndex)->{
+            return new Task(rst.getInt("id"),rst.getString("content"), Task.Status.valueOf(rst.getString("status")),rst.getInt("project_id"));
+        });
+
     }
 
     @Override
     public long count() {
-        try {
-            PreparedStatement stm = connection.prepareStatement("SELECT COUNT(id) FROM Task");
-            ResultSet rst = stm.executeQuery();
-            rst.next();
-            return rst.getLong("1");
+        return jdbc.queryForObject("SELECT COUNT(id) FROM Task",Long.class);
 
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Override
     public boolean existById(Integer pk) {
         return findById(pk).isPresent()  ;
+    }
+
+    @Override
+    public List<Task> findAllTaskByProjectId(Integer projectId) {
+        return jdbc.query("SELECT * FROM Task WHERE project_id=?",(rst,rowNum)->{
+           return new Task(rst.getInt("id"),rst.getString("content"), Task.Status.valueOf(rst.getString("status")), rst.getInt("project_id"));
+        },projectId);
     }
 }

@@ -18,7 +18,6 @@ import java.util.Optional;
 public class ProjectDAOImpl implements ProjectDAO {
     private JdbcTemplate jdbc;
 
-
     public ProjectDAOImpl(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
     }
@@ -51,13 +50,12 @@ public class ProjectDAOImpl implements ProjectDAO {
         jdbc.update("DELETE FROM Project WHERE id=?",pk);
 
     }
-
     @Override
     public Optional<Project> findById(Integer pk) {
-        return jdbc.query("SELECT * FROM Project WHERE id=?",rst->{
-            return Optional.of(new Project(rst.getInt("id"),
-            rst.getString("name"),rst.getString("username")));
-        },pk);
+        return Optional.ofNullable(jdbc.query("SELECT * FROM Project WHERE id=?",rst->{
+            return new Project(rst.getInt("id"),
+            rst.getString("name"),rst.getString("username"));
+        },pk));
 
     }
 

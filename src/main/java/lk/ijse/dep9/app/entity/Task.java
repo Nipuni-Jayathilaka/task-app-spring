@@ -13,7 +13,7 @@ public class Task implements SuperEntity{
     private Status status;
    private int projectId;
 
-    public Task(String content, Status status,int projectId) {
+    public Task(String content, Status status, int projectId) {
         this.content = content;
         this.status = status;
         this.projectId = projectId;
