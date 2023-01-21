@@ -22,4 +22,14 @@ public class GlobalExceptionHandler{
         errAttribute.put("errors",validationList);
         return  errAttribute;
     }
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(DuplicateFormatFlagsException.class)
+    public Map<String, Object> duplicateEntityExceptionHandler(){
+        HashMap<String, Object> errAttribute = new LinkedHashMap<>();
+        errAttribute.put("status", HttpStatus.CONFLICT.value());
+        errAttribute.put("error",HttpStatus.CONFLICT.getReasonPhrase());
+        errAttribute.put("message", "Duplicate entry found");
+        errAttribute.put("timestamp", new Date().toString());
+        return  errAttribute;
+    }
 }
