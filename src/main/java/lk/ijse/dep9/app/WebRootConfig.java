@@ -11,6 +11,7 @@ import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jndi.JndiObjectFactoryBean;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.context.annotation.RequestScope;
+import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
