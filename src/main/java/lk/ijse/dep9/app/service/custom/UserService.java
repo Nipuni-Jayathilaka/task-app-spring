@@ -7,4 +7,8 @@ public interface UserService extends SuperService {
     void createNewUserAccount(UserDTO userDTO);
 
     UserDTO verifyUser(String username, String password);
+
+    UserDTO getUserAccountDetails(String username);
+
+    void updateUserAccount(UserDTO userDTO);
 }

@@ -42,15 +42,14 @@ public class SecurityFilter extends HttpFilter {
                 try {
                     userService.verifyUser(username, password);
                     req.setAttribute("username",username);
+                    System.out.println(username);
                     chain.doFilter(req,res);
                     return;
                 }catch (AuthenticationException e){
-
+                    System.out.println("authentication error");
                 }
 
-
             }
-
             HashMap<String, Object> errAttribute = new LinkedHashMap<>();
             errAttribute.put("status", HttpStatus.UNAUTHORIZED.value());
             errAttribute.put("error",HttpStatus.UNAUTHORIZED.getReasonPhrase());
@@ -60,7 +59,6 @@ public class SecurityFilter extends HttpFilter {
             res.setContentType("application/json");
             ObjectMapper objectMapper=new ObjectMapper();
             objectMapper.writeValue(res.getWriter(),errAttribute);
-
         }
     }
 
