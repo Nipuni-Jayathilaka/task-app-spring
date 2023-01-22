@@ -3,7 +3,9 @@ package lk.ijse.dep9.app.service.custom.impl;
 import lk.ijse.dep9.app.dao.custom.ProjectDAO;
 import lk.ijse.dep9.app.dao.custom.TaskDAO;
 import lk.ijse.dep9.app.dto.ProjectDTO;
+import lk.ijse.dep9.app.dto.TaskDTO;
 import lk.ijse.dep9.app.entity.Project;
+import lk.ijse.dep9.app.entity.Task;
 import lk.ijse.dep9.app.exception.AccessDeniedException;
 import lk.ijse.dep9.app.service.custom.ProjectTaskService;
 import lk.ijse.dep9.app.util.Transformer;
@@ -51,6 +53,38 @@ public class ProjectTaskImpl implements ProjectTaskService {
     public void deleteProject(String username, int projectId) {
         taskDAO.findAllTaskByProjectId(projectId).forEach(task -> taskDAO.deleteById(task.getProjectId()));
         projectDAO.deleteById(projectId);
+    }
+
+    @Override
+    public TaskDTO createNewTask(String username, TaskDTO taskDTO) {
+        return transformer.toTaskDTO(taskDAO.save(transformer.toTask(taskDTO)));
+    }
+
+    @Override
+    public void renameTask(String username, TaskDTO taskDTO) {
+        taskDAO.update(transformer.toTask(taskDTO));
+    }
+
+    @Override
+    public void deleteTask(String username, TaskDTO taskDTO) {
+        taskDAO.deleteById(taskDTO.getId());
+    }
+
+    @Override
+    public TaskDTO getTaskDetails(String username, TaskDTO taskDTO) {
+        return taskDAO.findById(taskDTO.getId()).map(transformer::toTaskDTO).get();
+    }
+
+    @Override
+    public List<TaskDTO> getAllTasks(String username, int projectId) {
+        return taskDAO.findAllTaskByProjectId(projectId).stream().map(transformer::toTaskDTO).collect(Collectors.toList());
+    }
+
+    @Override
+    public void updateTaskStatus(String username, TaskDTO taskDTO, boolean completed) {
+        Task task = transformer.toTask(taskDTO);
+        task.setStatus(completed?Task.Status.COMPLETED:Task.Status.NOT_COMPLETED);
+        taskDAO.update(task);
     }
 
 }
