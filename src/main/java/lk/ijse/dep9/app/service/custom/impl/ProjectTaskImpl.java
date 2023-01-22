@@ -39,19 +39,16 @@ public class ProjectTaskImpl implements ProjectTaskService {
 
     @Override
     public ProjectDTO getProjectDetails(String username, int projectId) {
-
         return projectDAO.findById(projectId).map(transformer::toProjectDTO).get();
     }
 
     @Override
     public void renameProject(ProjectDTO projectDTO) {
-
         projectDAO.update(transformer.toProject(projectDTO));
     }
 
     @Override
     public void deleteProject(String username, int projectId) {
-
         taskDAO.findAllTaskByProjectId(projectId).forEach(task -> taskDAO.deleteById(task.getProjectId()));
         projectDAO.deleteById(projectId);
     }
