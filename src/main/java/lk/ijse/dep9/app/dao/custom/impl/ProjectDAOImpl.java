@@ -2,6 +2,7 @@ package lk.ijse.dep9.app.dao.custom.impl;
 
 import lk.ijse.dep9.app.dao.custom.ProjectDAO;
 import lk.ijse.dep9.app.entity.Project;
+import lk.ijse.dep9.app.entity.Task;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -75,4 +76,11 @@ public class ProjectDAOImpl implements ProjectDAO {
     public boolean existById(Integer pk) {
         return findById(pk).isPresent()  ;
     }
+
+    @Override
+    public List<Project> findAllProjectByUsername(String username) {
+        return jdbc.query("SELECT * FROM Project WHERE username = ?", (rst, rowIndex) ->
+                new Project(rst.getInt("id"),
+                        rst.getString("name"),
+                        rst.getString("username")), username);    }
 }
