@@ -7,6 +7,8 @@ import lk.ijse.dep9.app.exception.AccessDeniedException;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.EntityNotFoundException;
@@ -20,19 +22,25 @@ public class ServiceAdviser {
     public ServiceAdviser(ProjectDAO projectDAO) {
         this.projectDAO = projectDAO;
     }
+    @Pointcut("execution(public * lk.ijse.dep9.app.service.custom.ProjectTaskService(..))")
+    public void serviceMethodAuthorization(){}
 
-    @Before(value = "execution(public * lk.ijse.dep9.app.service.custom.ProjectTaskService.*(String,int)) && args(username,projectId)", argNames = "username,projectId")
-    //before every method execution which has public
+    @Before(value = "serviceMethodAuthorization() && args(username,projectId)",
+            argNames = "username,projectId")
     public void serviceMethodAuthorization(String username, int projectId){
-        Project project = projectDAO.findById(projectId).orElseThrow(EntityNotFoundException::new);
-        if(!project.getUsername().matches(username)) throw new AccessDeniedException();
-
+        executeAdvice(username, projectId);
     }
-    @Before(value = "execution(public * lk.ijse.dep9.app.service.custom.ProjectTaskService.*(..)) && args(projectDTO)", argNames = "projectDTO")
-    //before every method execution which has public
-    public void serviceMethodAuthorization2(ProjectDTO projectDTO){
-        Project project = projectDAO.findById(projectDTO.getId()).orElseThrow(EntityNotFoundException::new);
-        if(!project.getUsername().matches(projectDTO.getUsername())) throw new AccessDeniedException();
 
+    @Before(value = "serviceMethodAuthorization() && args(project)", argNames = "project")
+    public void serviceMethodAuthorization(ProjectDTO project){
+        if (project.getId()!=null)executeAdvice(project.getUsername(), project.getId());
     }
+
+    private void executeAdvice(String username, int projectId){
+        Project project = projectDAO.findById(projectId).orElseThrow(
+                () -> new EmptyResultDataAccessException(1));
+        if (!project.getUsername().matches(username)) throw new AccessDeniedException();
+    }
+
+
 }

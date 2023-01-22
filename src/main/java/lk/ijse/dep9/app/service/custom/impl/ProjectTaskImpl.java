@@ -52,4 +52,5 @@ public class ProjectTaskImpl implements ProjectTaskService {
         taskDAO.findAllTaskByProjectId(projectId).forEach(task -> taskDAO.deleteById(task.getProjectId()));
         projectDAO.deleteById(projectId);
     }
+
 }
