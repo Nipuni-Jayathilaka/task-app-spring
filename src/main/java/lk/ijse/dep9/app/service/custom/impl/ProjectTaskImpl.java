@@ -39,6 +39,7 @@ public class ProjectTaskImpl implements ProjectTaskService {
 
     @Override
     public ProjectDTO getProjectDetails(String username, int projectId) {
+        System.out.println("service layer"+projectId);
         ProjectDTO project = projectDAO.findById(projectId).map(transformer::toProjectDTO).orElseThrow(()-> new EmptyResultDataAccessException(1));
         if (!project.getUsername().matches(username)) throw new AccessDeniedException();
         return project;
@@ -54,6 +55,7 @@ public class ProjectTaskImpl implements ProjectTaskService {
 
     @Override
     public void deleteProject(String username, int projectId) {
+        System.out.println("projectsevicedelte"+projectId);
         Project project = projectDAO.findById(projectId).orElseThrow(()-> new EmptyResultDataAccessException(1));
         if (!project.getUsername().matches(username)) throw new AccessDeniedException();
 
