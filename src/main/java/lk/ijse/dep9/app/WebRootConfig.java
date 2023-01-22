@@ -1,10 +1,7 @@
 package lk.ijse.dep9.app;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DataSourceUtils;
@@ -23,6 +20,7 @@ import java.sql.SQLException;
 @ComponentScan
 @EnableTransactionManagement//give the transaction management
 // to spring
+@EnableAspectJAutoProxy //to enable aspectj
 public class WebRootConfig {
     @Bean
     public JndiObjectFactoryBean dataSource(){//register the datasource in the context
@@ -50,5 +48,7 @@ public class WebRootConfig {
     public ModelMapper modelMapper(){
         return new ModelMapper();
     }
+
+
 
 }

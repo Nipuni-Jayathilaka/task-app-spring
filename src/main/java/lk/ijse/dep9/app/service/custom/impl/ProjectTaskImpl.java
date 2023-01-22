@@ -39,25 +39,18 @@ public class ProjectTaskImpl implements ProjectTaskService {
 
     @Override
     public ProjectDTO getProjectDetails(String username, int projectId) {
-        System.out.println("service layer"+projectId);
-        ProjectDTO project = projectDAO.findById(projectId).map(transformer::toProjectDTO).orElseThrow(()-> new EmptyResultDataAccessException(1));
-        if (!project.getUsername().matches(username)) throw new AccessDeniedException();
-        return project;
+
+        return projectDAO.findById(projectId).map(transformer::toProjectDTO).get();
     }
 
     @Override
     public void renameProject(ProjectDTO projectDTO) {
-        Project project = projectDAO.findById(projectDTO.getId()).orElseThrow(EntityNotFoundException::new);
-        if(!project.getUsername().matches(projectDTO.getUsername())) throw new AccessDeniedException();
 
         projectDAO.update(transformer.toProject(projectDTO));
     }
 
     @Override
     public void deleteProject(String username, int projectId) {
-        System.out.println("projectsevicedelte"+projectId);
-        Project project = projectDAO.findById(projectId).orElseThrow(()-> new EmptyResultDataAccessException(1));
-        if (!project.getUsername().matches(username)) throw new AccessDeniedException();
 
         taskDAO.findAllTaskByProjectId(projectId).forEach(task -> taskDAO.deleteById(task.getProjectId()));
         projectDAO.deleteById(projectId);
