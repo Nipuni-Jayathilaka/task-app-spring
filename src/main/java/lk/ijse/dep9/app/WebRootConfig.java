@@ -2,6 +2,7 @@ package lk.ijse.dep9.app;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +19,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 @Configuration
+@ComponentScan
 @EnableTransactionManagement//give the transaction management
 // to spring
 public class WebRootConfig {

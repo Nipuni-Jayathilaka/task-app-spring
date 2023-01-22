@@ -2,9 +2,11 @@ package lk.ijse.dep9.app.dao.custom.impl;
 
 import lk.ijse.dep9.app.dao.custom.TaskDAO;
 import lk.ijse.dep9.app.entity.Task;
+import lk.ijse.dep9.app.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Component;
@@ -16,6 +18,8 @@ import java.util.Optional;
 @Component
 public class TaskDAOImpl implements TaskDAO {
     private JdbcTemplate jdbc;
+
+    private final RowMapper taskRowMapper= (rst,rowIndex)-> new Task(rst.getInt("id"),rst.getString("content"), Task.Status.valueOf(rst.getString("status")),rst.getInt("project_id"));
 
     public TaskDAOImpl(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
@@ -51,17 +55,13 @@ public class TaskDAOImpl implements TaskDAO {
 
     @Override
     public Optional<Task> findById(Integer pk) {
-        return Optional.ofNullable(jdbc.query("SELECT * FROM Task WHERE id=?",rst->{
-            return new Task(pk,rst.getString("content"), Task.Status.valueOf(rst.getString("status")), rst.getInt("project_id"));
-        },pk));
+        return jdbc.query("SELECT * FROM Task WHERE id=?",taskRowMapper,pk).stream().findFirst();
 
     }
 
     @Override
     public List<Task> findAll() {
-        return jdbc.query("SELECT * FROM Task",(rst,rowIndex)->{
-            return new Task(rst.getInt("id"),rst.getString("content"), Task.Status.valueOf(rst.getString("status")),rst.getInt("project_id"));
-        });
+        return jdbc.query("SELECT * FROM Task",taskRowMapper);
 
     }
 
@@ -78,8 +78,6 @@ public class TaskDAOImpl implements TaskDAO {
 
     @Override
     public List<Task> findAllTaskByProjectId(Integer projectId) {
-        return jdbc.query("SELECT * FROM Task WHERE project_id=?",(rst,rowNum)->{
-           return new Task(rst.getInt("id"),rst.getString("content"), Task.Status.valueOf(rst.getString("status")), rst.getInt("project_id"));
-        },projectId);
+        return jdbc.query("SELECT * FROM Task WHERE project_id=?", taskRowMapper,projectId);
     }
 }

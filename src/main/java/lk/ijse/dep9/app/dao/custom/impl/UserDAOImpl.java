@@ -5,6 +5,7 @@ import lk.ijse.dep9.app.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.Connection;
@@ -18,6 +19,7 @@ import java.util.Optional;
 public class UserDAOImpl implements UserDAO {
 
     private final JdbcTemplate jdbc;
+    private final RowMapper userRowMapper= (rs,rowNum) ->new User(rs.getString("username"), rs.getString("full_name"), rs.getString("password"));
 
     public UserDAOImpl(JdbcTemplate jdbc) {
         this.jdbc = jdbc;
@@ -43,17 +45,13 @@ public class UserDAOImpl implements UserDAO {
     }
     @Override
     public Optional<User> findById(String pk) {
-        return Optional.ofNullable(jdbc.query("SELECT full_name, username, password FROM User WHERE username=?",rs-> {
-            return new User(rs.getString("username"), rs.getString("full_name"), rs.getString("password"));
-
-        }, pk));
+        return jdbc.query("SELECT full_name, username, password FROM User WHERE username=?",userRowMapper,pk).stream().findFirst();
 
     }
 
     @Override
     public List<User> findAll() {
-        return jdbc.query("SELECT * FROM User ",(rs,rowNum) ->
-            new User(rs.getString("username"), rs.getString("full_name"), rs.getString("password")));
+        return jdbc.query("SELECT * FROM User ",userRowMapper);
 
     }
 
