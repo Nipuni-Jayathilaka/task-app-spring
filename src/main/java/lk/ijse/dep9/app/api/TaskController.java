@@ -4,6 +4,7 @@ import lk.ijse.dep9.app.dto.TaskDTO;
 import lk.ijse.dep9.app.service.custom.ProjectTaskService;
 import lk.ijse.dep9.app.util.ValidationGroups;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +21,13 @@ public class TaskController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping(consumes = "application/json")
-    public TaskDTO createNewTask(@RequestBody @Validated(ValidationGroups.Create.class)TaskDTO taskDTO, @RequestAttribute String username, @PathVariable int projectId){
+    public TaskDTO createNewTask(@RequestBody @Validated(ValidationGroups.Create.class)TaskDTO taskDTO, @AuthenticationPrincipal(expression = "username") String username, @PathVariable int projectId){
         taskDTO.setProjectId(projectId);
         return projectTaskService.createNewTask(username,taskDTO);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(value = "/{taskId:\\d+}",consumes = "application/json")
-    public void renameTask(@RequestBody @Validated(ValidationGroups.Update.class) TaskDTO taskDTO, @RequestAttribute String username, @PathVariable int projectId
+    public void renameTask(@RequestBody @Validated(ValidationGroups.Update.class) TaskDTO taskDTO, @AuthenticationPrincipal(expression = "username") String username, @PathVariable int projectId
     , @PathVariable int taskId){
         taskDTO.setProjectId(projectId);
         taskDTO.setId(taskId);
@@ -34,20 +35,21 @@ public class TaskController {
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping(value = "/{taskId:\\d+}")
-    public void deleteTask(@RequestAttribute String username, @PathVariable int projectId, @PathVariable int taskId){
-        projectTaskService.deleteTask(username,new TaskDTO(taskId,"",projectId));
+    public void deleteTask(@AuthenticationPrincipal(expression = "username") String username, @PathVariable int projectId, @PathVariable int taskId){
+        projectTaskService.deleteTask(username,new TaskDTO(taskId,projectId));
     }
     @GetMapping(value = "/{taskId:\\d+}",produces = "application/json")
-    public TaskDTO getTaskDetails(@RequestAttribute String username, @PathVariable int projectId, @PathVariable int taskId){
-        return projectTaskService.getTaskDetails(username,new TaskDTO(taskId,"",projectId));
+    public TaskDTO getTaskDetails(@AuthenticationPrincipal(expression = "username") String username, @PathVariable int projectId, @PathVariable int taskId){
+        return projectTaskService.getTaskDetails(username,new TaskDTO(taskId,projectId));
     }
     @GetMapping
-    public List<TaskDTO> getAllTasks(@RequestAttribute String username, @PathVariable int projectId){
+    public List<TaskDTO> getAllTasks(@AuthenticationPrincipal(expression = "username") String username, @PathVariable int projectId){
         return projectTaskService.getAllTasks(username,projectId);
     }
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    @DeleteMapping(value = "/{taskId:\\d+}",params = "completed")
-    public void updateTaskStatus(@RequestAttribute String username, @PathVariable int projectId, @PathVariable int taskId,@RequestParam boolean completed){
+    @PatchMapping(value = "/{taskId:\\d+}",params = "completed")
+    public void updateTaskStatus(@AuthenticationPrincipal(expression = "username") String username, @PathVariable int projectId, @PathVariable int taskId,@RequestParam boolean completed){
+        System.out.println(completed);
         projectTaskService.updateTaskStatus(username,new TaskDTO(taskId,projectId),completed);
     }
 }

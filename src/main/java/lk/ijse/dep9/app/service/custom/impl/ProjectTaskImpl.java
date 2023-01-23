@@ -64,6 +64,7 @@ public class ProjectTaskImpl implements ProjectTaskService {
     public void renameTask(String username, TaskDTO taskDTO) {
         Task task = taskDAO.findById(taskDTO.getId()).orElseThrow(() -> new EmptyResultDataAccessException(1));
         task.setContent(task.getContent());
+        taskDAO.update(transformer.toTask(taskDTO));
     }
 
     @Override

@@ -27,7 +27,7 @@ public class ServiceAdviser {
         this.projectDAO = projectDAO;
         this.taskDAO = taskDAO;
     }
-    @Pointcut("execution(public * lk.ijse.dep9.app.service.custom.ProjectTaskService(..))")
+    @Pointcut("execution(public * lk.ijse.dep9.app.service.custom.ProjectTaskService.*(..))")
     public void serviceMethodAuthorization(){}
 
     @Before(value = "serviceMethodAuthorization() && args(username,projectId)",
@@ -41,12 +41,14 @@ public class ServiceAdviser {
         if (project.getId()!=null)executeAdvice(project.getUsername(), project.getId());
     }
 
-    @Before(value = "serviceMethodAuthorization() && args(username,task,..)", argNames = "username,task")
+    @Before(value = "serviceMethodAuthorization() && args(username, task, ..)", argNames = "username,task")
     public void serviceMethodAuthorization(String username, TaskDTO task){
         executeAdvice(username, task.getProjectId());
-        if (task.getId()!=null){
-            Task taskEntity = taskDAO.findById(task.getId()).orElseThrow(() -> new EmptyResultDataAccessException(1));
-            if(taskDAO.findAllTaskByProjectId(taskEntity.getProjectId()).stream().noneMatch(task1 -> task1.getId()==taskEntity.getId())){
+        if (task.getId() != null){
+            Task taskEntity = taskDAO.findById(task.getId()).
+                    orElseThrow(() -> new EmptyResultDataAccessException(1));
+            if (taskDAO.findAllTaskByProjectId(task.getProjectId())
+                    .stream().noneMatch(t -> t.getId() == task.getId())){
                 throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
             }
         }

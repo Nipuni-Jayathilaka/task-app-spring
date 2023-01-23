@@ -21,6 +21,9 @@ public class TaskDTO {
     @Null(groups = {ValidationGroups.Create.class,ValidationGroups.Update.class},message = "Task id cannot be specified")
     private Integer projectId;
 
+    @Null(groups = {ValidationGroups.Create.class,ValidationGroups.Update.class},message = "Task status is read-only")
+    private Boolean isCompleted;
+
     public TaskDTO(Integer id, Integer projectId) {
         this.id = id;
         this.projectId = projectId;

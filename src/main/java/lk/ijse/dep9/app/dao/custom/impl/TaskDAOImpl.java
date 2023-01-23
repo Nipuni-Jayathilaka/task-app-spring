@@ -42,8 +42,8 @@ public class TaskDAOImpl implements TaskDAO {
 
     @Override
     public void update(Task task) {
-        jdbc.update("UPDATE Task SET content=?, status=? WHERE id=?",
-                task.getContent(),task.getStatus(),task.getProjectId());
+        jdbc.update("UPDATE Task SET content=?, status=?, project_id=? WHERE id=?",
+                task.getContent(), task.getStatus().toString(), task.getProjectId(), task.getId());
 
     }
 

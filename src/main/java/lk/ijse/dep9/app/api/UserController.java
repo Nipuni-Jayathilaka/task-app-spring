@@ -4,6 +4,7 @@ import lk.ijse.dep9.app.dto.UserDTO;
 import lk.ijse.dep9.app.service.custom.UserService;
 import lk.ijse.dep9.app.util.ValidationGroups;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
@@ -34,20 +35,20 @@ public class UserController {
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @PatchMapping(value = "/me", consumes = "application/json")
-    public void updateUserAccountDetails(@Validated(ValidationGroups.Update.class) @RequestBody UserDTO userDTO, @RequestAttribute String username){
+    public void updateUserAccountDetails(@Validated(ValidationGroups.Update.class) @RequestBody UserDTO userDTO, @AuthenticationPrincipal(expression = "username") String username){
         userDTO.setUsername(username);
         userService.updateUserAccount(userDTO);
     }
 
     @GetMapping(value = "/me",produces = "application/json")
-    public UserDTO getUserAccountDetails(@RequestAttribute String username){
+    public UserDTO getUserAccountDetails(@AuthenticationPrincipal(expression = "username") String username){
         System.out.println(username);
         return userService.getUserAccountDetails(username);
     }
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/me")
-    public void deleteUserAccount(@RequestAttribute String username){
+    public void deleteUserAccount(@AuthenticationPrincipal(expression = "username") String username){
         userService.deleteUserAccount(username);
     }
 }
