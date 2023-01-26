@@ -4,24 +4,31 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class Task implements SuperEntity{
-    private int id;
-    private String content;
-    private Status status=Status.NOT_COMPLETED;
-   private int projectId;
+import javax.persistence.*;
 
-    public Task(String content, Status status, int projectId) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+public class Task implements SuperEntity{
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+    @Column(nullable = false)
+    private String content;
+    @Enumerated(EnumType.STRING)
+    private Status status;
+    @JoinColumn(name = "project_id", referencedColumnName = "id", nullable = false)
+    @ManyToOne
+    private Project project;
+
+    public Task(String content, Status status, Project project) {
         this.content = content;
         this.status = status;
-        this.projectId = projectId;
+        this.project = project;
     }
 
-    public static enum Status{
+    public enum Status {
         COMPLETED, NOT_COMPLETED
     }
 }
-
-
